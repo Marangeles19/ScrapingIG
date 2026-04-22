@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>InstaScraper Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-10">
+        
+        <div class="max-w-2xl mx-auto mb-12">
+            <div class="flex gap-2">
+                <input type="text" id="targetUser" placeholder="Nombre de usuario (ej: nasa)" 
+                       class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:border-purple-500">
+                <button onclick="buscarPerfil()" class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-bold transition">
+                    Analizar
+                </button>
+            </div>
+            <p id="loading" class="hidden mt-4 text-center text-purple-400 animate-pulse">Scrapeando datos... por favor espera.</p>
+        </div>
+
+        <div id="dashboard" class="hidden max-w-4xl mx-auto animate-fade-in">
+            <div class="bg-gray-800 rounded-3xl p-8 border border-gray-700 shadow-2xl">
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-10">
+                    <div class="text-5xl text-purple-500"><i class="fa-brands fa-instagram"></i></div>
+                    <div class="text-center md:text-left">
+                        <h2 id="res-user" class="text-3xl font-bold text-white"></h2>
+                        <p id="res-name" class="text-gray-400"></p>
+                        <p id="res-bio" class="mt-2 text-sm text-gray-300 max-w-md"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-gray-900/50 p-6 rounded-2xl border border-gray-700 text-center">
+                        <span class="text-xs text-gray-500 block mb-1">SEGUIDORES</span>
+                        <span id="res-followers" class="text-2xl font-bold text-blue-400"></span>
+                    </div>
+                    <div class="bg-gray-900/50 p-6 rounded-2xl border border-gray-700 text-center">
+                        <span class="text-xs text-gray-500 block mb-1">POSTS</span>
+                        <span id="res-posts" class="text-2xl font-bold text-green-400"></span>
+                    </div>
+                    <div class="bg-gray-900/50 p-6 rounded-2xl border border-gray-700 text-center">
+                        <span class="text-xs text-gray-500 block mb-1">LIKES (U20)</span>
+                        <span id="res-likes" class="text-2xl font-bold text-pink-500"></span>
+                    </div>
+                    <div class="bg-gray-900/50 p-6 rounded-2xl border border-gray-700 text-center">
+                        <span class="text-xs text-gray-500 block mb-1">COMMENTS (U20)</span>
+                        <span id="res-comments" class="text-2xl font-bold text-yellow-500"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function buscarPerfil() {
+            const user = document.getElementById('targetUser').value;
+            if(!user) return alert("Escribe un usuario");
+
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+
+            try {
+                const response = await fetch(`/api/scrape/${user}`);
+                const data = await response.json();
+
+                if(data.status === "success") {
+                    document.getElementById('res-user').innerText = `@${data.usuario}`;
+                    document.getElementById('res-name').innerText = data.nombre;
+                    document.getElementById('res-bio').innerText = data.bio;
+                    document.getElementById('res-followers').innerText = data.seguidores;
+                    document.getElementById('res-posts').innerText = data.posts_count;
+                    document.getElementById('res-likes').innerText = data.likes_totales;
+                    document.getElementById('res-comments').innerText = data.comentarios_totales;
+                    
+                    document.getElementById('dashboard').classList.remove('hidden');
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch (err) {
+                alert("Error de conexión con el servidor");
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
