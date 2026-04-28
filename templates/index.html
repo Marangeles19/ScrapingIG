@@ -1,89 +1,194 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>InstaScraper Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta charset="UTF-8">
+<title>Instagram Analytics</title>
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        margin: 0;
+        color: white;
+        text-align: center;
+    }
+
+    h1 {
+        margin-top: 40px;
+        font-size: 2.5rem;
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+
+    input {
+        padding: 12px;
+        width: 250px;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 12px 20px;
+        margin-left: 10px;
+        border-radius: 8px;
+        border: none;
+        background: #ff7a18;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #ff4b2b;
+        transform: scale(1.05);
+    }
+
+    .dashboard {
+        display: none;
+        margin-top: 40px;
+    }
+
+    .cards {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 15px;
+        width: 200px;
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+
+    .card p {
+        font-size: 1.8rem;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    .download-btn {
+        margin-top: 30px;
+        background: #00c9a7;
+    }
+
+    .download-btn:hover {
+        background: #00a98f;
+    }
+
+    .loader {
+        display: none;
+        margin-top: 20px;
+        font-size: 18px;
+    }
+</style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen">
-    <div class="container mx-auto px-4 py-10">
-        
-        <div class="max-w-2xl mx-auto mb-12">
-            <div class="flex gap-2">
-                <input type="text" id="targetUser" placeholder="Nombre de usuario (ej: nasa)" 
-                       class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:border-purple-500">
-                <button onclick="buscarPerfil()" class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-bold transition">
-                    Analizar
-                </button>
-            </div>
-            <p id="loading" class="hidden mt-4 text-center text-purple-400 animate-pulse">Scrapeando datos... por favor espera.</p>
+
+<body>
+
+<h1>📊 Instagram Analytics</h1>
+
+<div class="container">
+    <input type="text" id="username" placeholder="Ingresa usuario">
+    <button onclick="buscar()">Analizar</button>
+</div>
+
+<div class="loader" id="loader">⏳ Analizando cuenta...</div>
+
+<div class="dashboard" id="dashboard">
+    <h2 id="user"></h2>
+
+    <div class="cards">
+        <div class="card">
+            <h3>👥 Seguidores</h3>
+            <p id="seguidores"></p>
         </div>
 
-        <div id="dashboard" class="hidden max-w-4xl mx-auto animate-fade-in">
-            <div class="bg-gray-800 rounded-3xl p-8 border border-gray-700 shadow-2xl">
-                <div class="flex flex-col md:flex-row items-center gap-8 mb-10">
-                    <div class="text-5xl text-purple-500"><i class="fa-brands fa-instagram"></i></div>
-                    <div class="text-center md:text-left">
-                        <h2 id="res-user" class="text-3xl font-bold text-white"></h2>
-                        <p id="res-name" class="text-gray-400"></p>
-                        <p id="res-bio" class="mt-2 text-sm text-gray-300 max-w-md"></p>
-                    </div>
-                </div>
+        <div class="card">
+            <h3>📸 Publicaciones</h3>
+            <p id="posts"></p>
+        </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-gray-900/50 p-6 rounded-2xl border border-gray-700 text-center">
-                        <span class="text-xs text-gray-500 block mb-1">SEGUIDORES</span>
-                        <span id="res-followers" class="text-2xl font-bold text-blue-400"></span>
-                    </div>
-                    <div class="bg-gray-900/50 p-6 rounded-2xl border border-gray-700 text-center">
-                        <span class="text-xs text-gray-500 block mb-1">POSTS</span>
-                        <span id="res-posts" class="text-2xl font-bold text-green-400"></span>
-                    </div>
-                    <div class="bg-gray-900/50 p-6 rounded-2xl border border-gray-700 text-center">
-                        <span class="text-xs text-gray-500 block mb-1">LIKES (U20)</span>
-                        <span id="res-likes" class="text-2xl font-bold text-pink-500"></span>
-                    </div>
-                    <div class="bg-gray-900/50 p-6 rounded-2xl border border-gray-700 text-center">
-                        <span class="text-xs text-gray-500 block mb-1">COMMENTS (U20)</span>
-                        <span id="res-comments" class="text-2xl font-bold text-yellow-500"></span>
-                    </div>
-                </div>
-            </div>
+        <div class="card">
+            <h3>❤️ Likes</h3>
+            <p id="likes"></p>
+        </div>
+
+        <div class="card">
+            <h3>💬 Comentarios</h3>
+            <p id="comentarios"></p>
         </div>
     </div>
 
-    <script>
-        async function buscarPerfil() {
-            const user = document.getElementById('targetUser').value;
-            if(!user) return alert("Escribe un usuario");
+    <button class="download-btn" onclick="descargar()">⬇ Descargar Excel</button>
+</div>
 
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('dashboard').classList.add('hidden');
+<script>
+let currentUser = "";
 
-            try {
-                const response = await fetch(`/api/scrape/${user}`);
-                const data = await response.json();
+function buscar() {
+    const user = document.getElementById("username").value.trim();
 
-                if(data.status === "success") {
-                    document.getElementById('res-user').innerText = `@${data.usuario}`;
-                    document.getElementById('res-name').innerText = data.nombre;
-                    document.getElementById('res-bio').innerText = data.bio;
-                    document.getElementById('res-followers').innerText = data.seguidores;
-                    document.getElementById('res-posts').innerText = data.posts_count;
-                    document.getElementById('res-likes').innerText = data.likes_totales;
-                    document.getElementById('res-comments').innerText = data.comentarios_totales;
-                    
-                    document.getElementById('dashboard').classList.remove('hidden');
-                } else {
-                    alert("Error: " + data.message);
-                }
-            } catch (err) {
-                alert("Error de conexión con el servidor");
-            } finally {
-                document.getElementById('loading').classList.add('hidden');
+    if (!user) {
+        alert("Ingresa un usuario");
+        return;
+    }
+
+    currentUser = user;
+
+    document.getElementById("loader").style.display = "block";
+    document.getElementById("dashboard").style.display = "none";
+
+    fetch(`/api/scrape/${user}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("loader").style.display = "none";
+
+            if (data.status === "success") {
+                document.getElementById("dashboard").style.display = "block";
+
+                document.getElementById("user").innerText = "@" + data.data.usuario;
+                document.getElementById("seguidores").innerText = data.data.seguidores;
+                document.getElementById("posts").innerText = data.data.publicaciones;
+                document.getElementById("likes").innerText = data.data.likes;
+                document.getElementById("comentarios").innerText = data.data.comentarios;
+            } else {
+                alert(data.message);
             }
-        }
-    </script>
+        })
+        .catch(err => {
+            document.getElementById("loader").style.display = "none";
+            alert("Error al conectar");
+            console.error(err);
+        });
+}
+
+function descargar() {
+    if (!currentUser) {
+        alert("Primero analiza un usuario");
+        return;
+    }
+
+    window.open(`/api/export/${currentUser}`, "_blank");
+}
+</script>
+
 </body>
 </html>
