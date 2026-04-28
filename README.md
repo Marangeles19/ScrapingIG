@@ -201,7 +201,7 @@ El sistema realiza los siguientes pasos:
 1. Abre una sesión persistente de Chrome.
 2. Accede al perfil de Instagram.
 3. Extrae seguidores y publicaciones.
-4. Analiza las primeras 10 publicaciones.
+4. Analiza las publicaciones.
 5. Obtiene likes y comentarios.
 6. Devuelve los datos mediante una API REST.
 7. Permite exportar la información a Excel.
