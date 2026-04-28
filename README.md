@@ -278,21 +278,11 @@ Utilizado para:
 
 <div align="center">
 
-## ✨ Desarrollado por Ángeles Taco ✨
+## ✨ Desarrollado por María de los Ángeles Taco ✨
 
 Proyecto desarrollado con Python, Flask y Playwright.
 
 </div>
-
----
-
-# ⭐ Apoya el Proyecto
-
-Si te gustó este proyecto:
-
-🌟 Dale una estrella en GitHub
-🍴 Haz un fork del repositorio
-📢 Compártelo con otros desarrolladores
 
 ---
 
