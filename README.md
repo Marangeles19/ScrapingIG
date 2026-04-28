@@ -260,6 +260,200 @@ Utilizado para:
 
 ---
 
+# 🧠 Lógica Utilizada en el Proyecto
+
+El proyecto sigue una arquitectura basada en automatización web + API REST.
+
+## 🔄 Flujo General del Sistema
+
+```text
+Usuario ingresa un username
+            ↓
+Flask recibe la solicitud
+            ↓
+Playwright abre Instagram
+            ↓
+Se realiza el scraping del perfil
+            ↓
+Se extraen publicaciones, likes y comentarios
+            ↓
+Los datos se procesan con Python y Pandas
+            ↓
+Flask devuelve la información al frontend o exporta a Excel
+```
+
+---
+
+## ⚙️ Lógica Implementada
+
+### 1️⃣ Automatización del Navegador
+
+Se utiliza Playwright para controlar un navegador Chromium real.
+
+El navegador:
+
+* Accede automáticamente al perfil de Instagram.
+* Espera que el contenido cargue dinámicamente.
+* Busca los elementos HTML necesarios.
+* Extrae información pública del perfil.
+
+---
+
+### 2️⃣ Uso de Sesión Persistente
+
+Instagram posee mecanismos anti-bots.
+
+Para evitar bloqueos constantes, el sistema utiliza:
+
+```python
+launch_persistent_context()
+```
+
+Esto permite:
+
+✅ Mantener cookies
+✅ Conservar sesiones iniciadas
+✅ Simular un navegador real
+✅ Reducir restricciones de Instagram
+
+---
+
+### 3️⃣ Extracción de Publicaciones
+
+La lógica del scraping:
+
+* Obtiene las primeras publicaciones del perfil.
+* Ingresa individualmente a cada publicación.
+* Extrae:
+
+  * likes
+  * comentarios
+  * imagen
+  * enlace
+
+Esto permite analizar el rendimiento del contenido del perfil.
+
+---
+
+### 4️⃣ Procesamiento de Datos
+
+Los datos extraídos se almacenan temporalmente en estructuras de Python.
+
+Posteriormente Pandas:
+
+* organiza la información,
+* crea tablas,
+* y exporta archivos Excel.
+
+---
+
+### 5️⃣ API REST con Flask
+
+Flask actúa como intermediario entre:
+
+* el frontend,
+* el scraper,
+* y la exportación de datos.
+
+La API permite:
+
+✅ Consultar perfiles
+✅ Obtener publicaciones
+✅ Descargar archivos Excel
+
+---
+
+# ⚠️ Desafíos Encontrados Durante el Desarrollo
+
+## 🚫 Restricciones de Instagram
+
+Uno de los principales problemas fue que Instagram detecta automatizaciones fácilmente.
+
+### Problemas encontrados:
+
+* Bloqueos temporales
+* Solicitud de login
+* Captchas
+* Contenido que no cargaba
+* Límites de peticiones
+
+### Solución aplicada:
+
+✅ Uso de sesión persistente
+✅ Simulación de comportamiento humano
+✅ Esperas dinámicas con Playwright
+
+---
+
+## ⏳ Carga Dinámica del Contenido
+
+Instagram carga muchos elementos mediante JavaScript.
+
+Esto provocaba:
+
+* elementos inexistentes al inicio,
+* errores de scraping,
+* y tiempos inconsistentes.
+
+### Solución:
+
+Se utilizaron:
+
+```python
+wait_for_selector()
+```
+
+y tiempos de espera controlados para garantizar que los elementos estuvieran completamente cargados.
+
+---
+
+## 🧩 Cambios Constantes en el HTML de Instagram
+
+Instagram modifica frecuentemente:
+
+* clases CSS,
+* estructuras HTML,
+* selectores.
+
+Esto afecta directamente al scraping.
+
+### Solución:
+
+Se utilizaron selectores más flexibles y estrategias de búsqueda menos dependientes de clases estáticas.
+
+---
+
+## 📊 Exportación Correcta de Datos
+
+Otro desafío fue estructurar correctamente la información obtenida.
+
+### Problemas:
+
+* Datos incompletos
+* Valores nulos
+* Formatos inconsistentes
+
+### Solución:
+
+Se procesaron los datos con Pandas antes de exportarlos a Excel.
+
+---
+
+## 🌐 Comunicación Frontend ↔ Backend
+
+Se necesitó coordinar correctamente:
+
+* solicitudes HTTP,
+* respuestas JSON,
+* renderizado de publicaciones,
+* y descarga de archivos.
+
+### Resultado:
+
+Se logró una integración funcional entre Flask y el frontend.
+
+---
+
 # 🚀 Posibles Mejoras Futuras
 
 ✅ Login automático
@@ -278,7 +472,7 @@ Utilizado para:
 
 <div align="center">
 
-## ✨ Desarrollado por Ángeles Taco ✨
+## ✨ Desarrollado por María de los Ángeles Taco ✨
 
 Proyecto desarrollado con Python, Flask y Playwright.
 
@@ -286,15 +480,6 @@ Proyecto desarrollado con Python, Flask y Playwright.
 
 ---
 
-# ⭐ Apoya el Proyecto
-
-Si te gustó este proyecto:
-
-🌟 Dale una estrella en GitHub
-🍴 Haz un fork del repositorio
-📢 Compártelo con otros desarrolladores
-
----
 
 # 📜 Licencia
 
