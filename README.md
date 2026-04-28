@@ -480,6 +480,15 @@ Proyecto desarrollado con Python, Flask y Playwright.
 
 ---
 
+# ⭐ Apoya el Proyecto
+
+Si te gustó este proyecto:
+
+🌟 Dale una estrella en GitHub
+🍴 Haz un fork del repositorio
+📢 Compártelo con otros desarrolladores
+
+---
 
 # 📜 Licencia
 
